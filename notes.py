@@ -102,10 +102,18 @@ titanic = pd.read_csv('test.csv')
 # consider the education sector where the correlation between study time and exam scores is being analyzed
 # to determine the extent to which study time affects exam scores
 
+# real life example of covariance
+# consider the finance sector where the covariance between two stocks is being analyzed
+# to determine the extent to which the stocks move together
+
+# consider the education sector where the covariance between study time and exam scores is being analyzed
+# to determine the extent to which study time affects exam scores
+# correlation and covariance are used to analyze the relationship between two variables
+
 
 # example 
 import numpy as np
-# advertising = [10, 20, 300, 400, 500]
+# advertising = [1000, 2000, 300, 400, 500]
 # sales = [50, 150, 250, 350, 450]
 
 # # calculate the covariance
@@ -122,9 +130,63 @@ import numpy as np
 # to determine the relationship between the age of passengers and the fare they paid
 
 # calculate the covariance
-covariance = np.cov(titanic['Age'], titanic['Fare'])[0][1]
-print('Covariance:', covariance)
+# covariance = np.cov(titanic['Age'], titanic['Fare'])[0][1]
+# print('Covariance:', covariance)
 
 # calculate the correlation coefficient
-correlation = np.corrcoef(titanic['Age'], titanic['Fare'])[0][1]
-print('Correlation coefficient:', correlation)
+# correlation = np.corrcoef(titanic['Age'], titanic['Fare'])[0][1]
+# print('Correlation coefficient:', correlation)
+
+# introduction to Exploratory Data Analysis
+
+# Exploratory Data Analysis (EDA) is an approach to analyzing data sets to summarize their main characteristics 
+
+# eda is a process of examining datasets to summarise their main characteristics, often with visual methods
+# it helps to understand the data, identify patterns, relationships, and anomalies in the data
+# it is an important step in the data analysis process as it provides insights into the data
+
+#  why eda is important
+# 1. understand the data - eda helps to understand the data and its structure
+# 2. identify patterns - eda helps to identify patterns and relationships in the data
+# 3. detect anomalies - eda helps to detect anomalies and outliers in the data
+# 4. make informed decisions - eda helps to make informed decisions based on the data
+# 5. communicate insights - eda helps to communicate insights and findings to stakeholders
+# 6. improve data quality - eda helps to improve data quality by identifying and addressing data
+
+# steps of eda
+# 1. load the data - load the dataset into the analysis environment
+# 2. check the data - check the data for missing values, duplicates, and outliers
+# 3. explore the data - explore the data using descriptive statistics and visualizations
+# 4. analyze the data - analyze the data to identify patterns, relationships, and anomalies
+# 5. interpret the data - interpret the data to draw insights and make informed decisions
+# 6. communicate the results - communicate the results to stakeholders using visualizations and reports
+
+# tools for eda
+# 1. python - pandas, numpy, matplotlib, seaborn
+# pandas - data manipulation and analysis and summary statistics
+# numpy - numerical computing and array operations
+# matplotlib - data visualization and plotting
+# seaborn - data visualization and statistical graphics
+
+# example of eda
+# consider the titanic dataset from seaborn library
+# we will perform eda on the dataset to understand the data, identify patterns, and relationships
+
+# load the data
+df = pd.read_csv('test.csv')
+
+# print(df.head())
+# print(df.info())
+# print(df.describe())
+
+# check for the missing values
+print(df.isnull().sum())
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# sns.heatmap(df.isnull(), cbar=False, cmap='viridis')
+# plt.title('missing values')
+# plt.show()
+
+# 
