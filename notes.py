@@ -96,6 +96,11 @@ titanic = pd.read_csv('test.csv')
 # -1 - perfect negative correlation
 # 0 - no correlation
 
+# correlation in an heat map visualization
+# sns.heatmap(titanic.corr(), annot=True, cmap='coolwarm')
+# plt.title('correlation heatmap')
+# plt.show()
+
 # real life example of correlation
 # consider the finance sector where the correlation between two stocks is being analyzed
 # to determine the extent to which the stocks move together
@@ -189,4 +194,63 @@ import matplotlib.pyplot as plt
 # plt.title('missing values')
 # plt.show()
 
-# 
+# summarise the dataset
+# print(df.describe())
+ 
+# analyse the data distribution using an histogram
+
+# sns.histplot(df['Age'], bins=30, kde=True)
+# plt.title('Age distribution')
+# plt.show()
+
+# explore the relationship between age and fare using a scatter plot
+# sns.scatterplot(x='Age', y='Fare', data=df)
+# plt.title('Age vs Fare')
+# plt.show()
+
+# #  sns regplot
+# sns.regplot(x='Age', y='Fare', data=df)
+# plt.title('Age vs Fare')
+# plt.show()
+
+
+# data visualization techniques in eda
+# 1. histograms - visualize the distribution of a numerical variable
+# 2. scatter plots - visualize the relationship between two numerical variables
+# 3. box plots - visualize the distribution of a numerical variable by quartiles
+# 4. bar plots - visualize the distribution of a categorical variable/ dataset
+# 5. line plots - visualize the trend of a numerical variable over time
+# 6. heatmaps - visualize the correlation between numerical variables
+# 7. pair plots - visualize the relationship between numerical variables in a dataset
+
+# common Data Visualization Techniques
+# 1. univariate analysis - analysis of a single variable
+#   - histograms
+#    shows the distribution of a numerical data
+#    helps to identify patterns and anomalies in the data
+    #  example - age distribution in a dataset
+# sns.histplot(df['Age'], bins=30, kde=True)
+# plt.title('Age distribution')
+# plt.show()
+
+
+# 2. bivariate analysis - analysis of two variables
+#   - scatter plots(relationship between two numerical variables)
+#  helps to identify the trends and correlations between two variables
+
+#   - bar plots (distribution of a categorical variable)
+#   helps to identify the distribution of a categorical variable in a dataset
+#   example
+# sns.countplot(x='Sex', data=df)
+# plt.title('number of passengers by Gender')
+# plt.xlabel('gender')
+# plt.ylabel('count')
+# plt.show()
+    
+# 3. multivariate analysis - analysis of more than two variables
+#   - pair plots (relationship between multiple numerical variables)
+#   helps to identify the relationships between multiple numerical variables in a dataset
+#   example
+# sns.pairplot(df[['Age', 'Fare', 'Sex', 'Pclass']])
+# plt.title('pair plot')
+# plt.show()
