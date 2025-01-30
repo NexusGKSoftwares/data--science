@@ -9,7 +9,7 @@
 # deviation of each data point from the mean
 
 # # mean
-# import numpy as np
+import numpy as np
 # data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 # print('Mean:', np.mean(data))
@@ -178,17 +178,27 @@ import numpy as np
 # we will perform eda on the dataset to understand the data, identify patterns, and relationships
 
 # load the data
-df = pd.read_csv('test.csv')
+df = pd.read_csv('train.csv')
 
 # print(df.head())
 # print(df.info())
 # print(df.describe())
 
 # check for the missing values
-print(df.isnull().sum())
+# print(df.isnull().sum())
 
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+# set the seaborn style
+sns.set_theme(style='darkgrid')
+
+#  2 customizing maplotlib and seaborn plots
+
+#   - it helps us to enhance the readability and impact
+#   - figure size, labels and titles
+
+
 
 # sns.heatmap(df.isnull(), cbar=False, cmap='viridis')
 # plt.title('missing values')
@@ -254,3 +264,93 @@ import matplotlib.pyplot as plt
 # sns.pairplot(df[['Age', 'Fare', 'Sex', 'Pclass']])
 # plt.title('pair plot')
 # plt.show()
+
+# advanced data visualization with seaborn and matplotlib
+
+
+# 1 setting up the environment
+#   - install the required libraries
+#   - import the required libraries
+
+# set the seaborn style
+sns.set_theme(style='darkgrid')
+
+#  2 customizing maplotlib and seaborn plots
+
+#   - it helps us to enhance the readability and impact
+#   - figure size, lables and titles
+
+# plt.figure(figsize=(10, 6))
+# sns.histplot(data=df, x='Age', bins=30, kde=True)
+# plt.title('Age distribution')
+# plt.xlabel('Age')
+# plt.ylabel('count')
+# plt.show()
+
+# custom color palettes
+# seaborn offers built in palletes like coolwarm, viridis and magma
+
+sns.set_palette('viridis')
+
+# custom_pallete = ["#FF6F61", "#6B4226", "#FFC107", "#8BC34A"]
+# sns.set_palette(custom_pallete)
+
+
+# 3 Advanced Seaborn Plots
+
+#   - pairplot(multivariate analysis)
+#   enables us to visualize relationships in numerical data
+#   example
+# sns.pairplot(df[['Age', 'Fare', 'Survived', 'Pclass']])
+# plt.title('pair plot')
+# plt.show()
+
+#  - heatmap(correlation Matrix)
+
+# plt.figure(figsize=(10, 6))
+# sns.heatmap(df.corr(), annot=True, cmap='coolwarm', square=True)
+# plt.title('correlation matrix')
+# plt.show()
+
+#  - boxplot (outlier detection)
+
+# plt.figure(figsize=(10, 6))
+# sns.boxplot(data=df, x='Age')
+# plt.title('box plot')
+# plt.show()
+
+# violin plot (distribution & density)
+
+# plt.figure(figsize=(10, 6))
+# sns.violinplot(data=df, x='Age')
+# plt.title('violin plot')
+# plt.show()
+
+# Facegrid(multiple plot in one figure)
+
+# plt.figure(figsize=(10, 6))
+# g = sns.FacetGrid(df, col='Survived', hue="Pclass", height=4)
+# g.map(sns.scatterplot, 'Age', 'Fare').add_legend()
+# plt.show()
+
+
+# 4 combining the seaborn & matplotlib
+# we can use matplotlib to add more features to seaborn plots
+# example
+
+# fig, ax = plt.subplots(figsize=(10, 6))
+# sns.scatterplot(data=df, x='Age', y='Fare' )
+# ax.set_title('Scatter plot')
+# ax.set_xlabel('Age')
+# ax.set_ylabel('Fare')
+# plt.xticks(rotation=45)
+# plt.show()
+
+# 5 interactive plots with seaborn and matplotlib
+
+# import mplcursors
+# fig, ax = plt.subplots(figsize=(10, 6))
+# sns.scatterplot(data=df, x='Age', y='Fare')
+# cursor = mplcursors.cursor(ax, hover=True)
+# cursor.connect("add", lambda sel:sel.annotation.set_text(f"({sel.target[0]:.2f},
+#                                                          {sel.target[1]:.2f})"))
