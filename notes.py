@@ -34,7 +34,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 
-titanic = pd.read_csv('test.csv')
+titanic = pd.read_csv('train.csv')
 # print(titanic.head())
 
 # age column
@@ -347,10 +347,62 @@ sns.set_palette('viridis')
 # plt.show()
 
 # 5 interactive plots with seaborn and matplotlib
+# we can use interactive plots to explore data in more detail
+# example
+import plotly.express as px
+# import plotly.graph_objects as go
+# fig = px.scatter(df, x='Age', y='Fare')
+# fig.show()
 
-# import mplcursors
-# fig, ax = plt.subplots(figsize=(10, 6))
-# sns.scatterplot(data=df, x='Age', y='Fare')
-# cursor = mplcursors.cursor(ax, hover=True)
-# cursor.connect("add", lambda sel:sel.annotation.set_text(f"({sel.target[0]:.2f},
-#                                                          {sel.target[1]:.2f})"))
+# using mplcursors for hover display 
+import mplcursors
+
+# fig, ax = plt.subplots()
+# scatter = sns.scatterplot(df, x="Age", y="Fare", hue="Survived", alpha=0.7)
+
+# # add interactive hover tooltips
+# cursor = mplcursors.cursor(scatter, hover=True)
+# cursor.connect("add", lambda sel: sel.annotation.set_text(f"Age: {sel.target[0]:.1f}\nFare: {sel.target[1]:.2f}"))
+
+# plt.show()
+
+# install mplcursors using pip install mplcursors
+# !pip install mplcursors
+
+# interactive histogram with seaborn and plotly
+# import plotly.express as px
+# fig = px.histogram(df, x="Age", nbins=50, title="Histogram of Age", color_discrete_sequence=["#3498db"], hover_data=["Fare"])
+# fig.show()
+
+
+# interactive boxplot using plotly
+# import plotly.express as px
+# fig = px.box(df, x="Pclass", y="Fare", title="Box", color="Pclass", hover_data=["Sex", "Age"])
+# fig.show()
+
+# interactive filtering with ipwidgets
+import ipywidgets as widgets
+from  IPython.display import display
+# create a dropdown widget
+# pclass = widgets.Dropdown(options=['1st', '2nd', '3rd'],value='1st',description='Pclass:',disabled=False)
+# # display the widget
+# display(pclass)
+
+
+class_selector = widgets.Dropdown(options=["All"] + list(df['Pclass'].unique()), value="All", description='Pclass:', disabled=False)
+
+def update_plot(selected_class):
+    plt.clf()
+    filtered_data = df if selected_class == "All" else df[df['Pclass'] == selected_class]
+    sns.histplot(data = filtered_data, x="Age", y="Fare", hue="Survived", bins=20, kde=True)
+    plt.title(f"age distribution - {selected_class}")
+    plt.show()
+    
+widgets.interactive(update_plot, selected_class=class_selector)
+display(class_selector)
+
+
+# conclusion
+# use mplcursors to add interactive hover tooltips to plots
+# use plotly to create interactive bar, scatter and box plots
+# use ipywidgets to create interactive dropdown menus and sliders to filter data
