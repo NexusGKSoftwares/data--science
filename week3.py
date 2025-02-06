@@ -31,3 +31,5 @@ df['Cabin'].fillna(df['Cabin'].mode()[0], inplace=True)
 # df['Age'].fillna(method='bfill', inplace=True) # backward fill
 
 # handling duplicates
+
+
