@@ -1,108 +1,78 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
-from scipy.stats import zscore
 
-# Load dataset (change filename if needed)
-file_path = "production_2025.csv"
+# Load the dataset
+file_path = "data_2025.csv"  # Update this to your actual file path
 data_2025 = pd.read_csv(file_path)
 
-# ✅ Fix date parsing
+# Fix Date column parsing
 data_2025["Date"] = pd.to_datetime(data_2025["Date"], errors="coerce", dayfirst=True)
 
-# ✅ Ensure numerical columns are correctly formatted
+# Handle missing Date values (replace with default or drop)
+data_2025["Date"].fillna(pd.Timestamp("2025-01-01"), inplace=True)  # Replace NaN dates with Jan 1, 2025
+
+# Ensure numerical columns are correctly formatted
 numeric_cols = ["Field Wght", "Factory W", "Variance", "Average", "Rainfall", "Running totals"]
 for col in numeric_cols:
     data_2025[col] = pd.to_numeric(data_2025[col], errors="coerce")
 
-# ✅ Fill missing values (0 for numeric columns)
+# Fill missing numeric values with 0
 data_2025.fillna(0, inplace=True)
 
-# ✅ Sort data by date
+# Sort by Date
 data_2025 = data_2025.sort_values(by="Date")
 
-# ✅ Calculate 7-day moving average for Factory W
-data_2025["Factory W MA7"] = data_2025["Factory W"].rolling(window=7, min_periods=1).mean()
+# ---- Data Analysis ----
 
-# ✅ Calculate daily change percentage for Factory W
-data_2025["Daily Change %"] = data_2025["Factory W"].pct_change() * 100
-
-# ✅ Identify significant drops (>10% decrease)
-significant_drops = data_2025[data_2025["Daily Change %"] < -10]
-
-# ✅ Identify significant spikes (>10% increase)
-significant_spikes = data_2025[data_2025["Daily Change %"] > 10]
-
-# ✅ Detect anomalies using Z-score method
-data_2025["Z-Score"] = zscore(data_2025["Factory W"])
-anomalies = data_2025[np.abs(data_2025["Z-Score"]) > 2.5]  # Anomalies with Z-score > 2.5
-
-# ✅ Calculate cumulative sum for running totals
-data_2025["Cumulative Production"] = data_2025["Factory W"].cumsum()
-
-# ✅ Plot Factory Weight Trends
-plt.figure(figsize=(14, 6))
-sns.lineplot(data=data_2025, x="Date", y="Factory W", label="Factory W", marker="o")
-sns.lineplot(data=data_2025, x="Date", y="Factory W MA7", label="7-day Moving Avg", linestyle="--")
+# Check for production trends
+plt.figure(figsize=(12, 6))
+sns.lineplot(x="Date", y="Factory W", data=data_2025, marker="o", label="Factory Weight")
+sns.lineplot(x="Date", y="Field Wght", data=data_2025, marker="s", label="Field Weight")
 plt.xlabel("Date")
-plt.ylabel("Factory Weight")
-plt.title("📈 Factory Weight Trend in 2025")
-plt.xticks(rotation=45)
+plt.ylabel("Weight (kg)")
+plt.title("Production Trends (Factory vs. Field Weight) - 2025")
 plt.legend()
-plt.grid()
+plt.xticks(rotation=45)
+plt.grid(True)
 plt.show()
 
-# ✅ Plot Variance Over Time
-plt.figure(figsize=(12, 5))
-sns.barplot(data=data_2025, x="Date", y="Variance", color="red")
+# Variance trend
+plt.figure(figsize=(12, 6))
+sns.lineplot(x="Date", y="Variance", data=data_2025, marker="o", color="red")
 plt.xlabel("Date")
 plt.ylabel("Variance")
-plt.title("⚠️ Variance in Production Over Time")
+plt.title("Variance Over Time - 2025")
 plt.xticks(rotation=45)
-plt.grid()
+plt.grid(True)
 plt.show()
 
-# ✅ Plot Running Totals Over Time
-plt.figure(figsize=(12, 5))
-sns.lineplot(data=data_2025, x="Date", y="Cumulative Production", color="green", marker="o")
-plt.xlabel("Date")
-plt.ylabel("Cumulative Production")
-plt.title("📊 Cumulative Factory Production in 2025")
-plt.xticks(rotation=45)
-plt.grid()
+# Average weight vs. Rainfall
+plt.figure(figsize=(10, 5))
+sns.scatterplot(x="Rainfall", y="Average", data=data_2025, color="green")
+plt.xlabel("Rainfall (mm)")
+plt.ylabel("Average Weight")
+plt.title("Impact of Rainfall on Average Weight - 2025")
+plt.grid(True)
 plt.show()
 
-# ✅ Rainfall vs Factory Weight (Correlation Analysis)
+# Detecting drops in production
+data_2025["Factory_W_Change"] = data_2025["Factory W"].diff()
+data_2025["Field_W_Change"] = data_2025["Field Wght"].diff()
+
 plt.figure(figsize=(12, 6))
-sns.scatterplot(data=data_2025, x="Rainfall", y="Factory W", hue="Date", palette="coolwarm", size=2)
-plt.xlabel("Rainfall")
-plt.ylabel("Factory Weight")
-plt.title("☔ Rainfall Impact on Production")
-plt.grid()
+sns.lineplot(x="Date", y="Factory_W_Change", data=data_2025, marker="o", label="Factory Weight Change")
+sns.lineplot(x="Date", y="Field_W_Change", data=data_2025, marker="s", label="Field Weight Change")
+plt.xlabel("Date")
+plt.ylabel("Change in Weight")
+plt.title("Daily Changes in Production Weight - 2025")
+plt.legend()
+plt.xticks(rotation=45)
+plt.grid(True)
 plt.show()
 
-# ✅ Highlight Significant Production Drops
-if not significant_drops.empty:
-    print("\n🚨 Significant production drops (>10%) detected:")
-    print(significant_drops[["Date", "Factory W", "Daily Change %"]])
-else:
-    print("\n✅ No major production drops detected.")
+# Display processed data
+print(data_2025.head())
 
-# ✅ Highlight Significant Production Spikes
-if not significant_spikes.empty:
-    print("\n🚀 Significant production spikes (>10%) detected:")
-    print(significant_spikes[["Date", "Factory W", "Daily Change %"]])
-else:
-    print("\n✅ No major production spikes detected.")
-
-# ✅ Highlight Anomalies
-if not anomalies.empty:
-    print("\n⚠️ Detected Anomalies in Production Data:")
-    print(anomalies[["Date", "Factory W", "Z-Score"]])
-else:
-    print("\n✅ No major anomalies detected.")
-
-# ✅ Save cleaned data for further analysis
-data_2025.to_csv("cleaned_production_2025.csv", index=False)
-print("\n✅ Cleaned data saved as 'cleaned_production_2025.csv' for further analysis.")
+# Save cleaned data
+data_2025.to_csv("cleaned_data_2025.csv", index=False)
