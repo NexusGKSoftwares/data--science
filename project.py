@@ -3,76 +3,57 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-file_path = "production_2025.csv"  # Update this to your actual file path
+file_path = "production_2025.csv"  # Change this to the correct filename if needed
 data_2025 = pd.read_csv(file_path)
 
-# Fix Date column parsing
+# Fix date format issues
+print("Checking the first few rows of the 'Date' column:")
+print(data_2025["Date"].head())  # Print sample dates to debug format issues
+
+# Convert the Date column to datetime format
 data_2025["Date"] = pd.to_datetime(data_2025["Date"], errors="coerce", dayfirst=True)
 
-# Handle missing Date values (replace with default or drop)
-data_2025["Date"].fillna(pd.Timestamp("2025-01-01"), inplace=True)  # Replace NaN dates with Jan 1, 2025
+# Check for missing dates
+if data_2025["Date"].isna().sum() > 0:
+    print("Warning: Some dates could not be converted. Check for inconsistencies.")
 
-# Ensure numerical columns are correctly formatted
-numeric_cols = ["Field Wght", "Factory W", "Variance", "Average", "Rainfall", "Running totals"]
-for col in numeric_cols:
-    data_2025[col] = pd.to_numeric(data_2025[col], errors="coerce")
-
-# Fill missing numeric values with 0
-data_2025.fillna(0, inplace=True)
-
-# Sort by Date
+# Sort data by date
 data_2025 = data_2025.sort_values(by="Date")
 
-# ---- Data Analysis ----
+# Ensure numerical columns are converted properly
+cols_to_convert = ["Field Wght", "Factory W", "Variance", "Average", "Rainfall", "Running totals"]
+for col in cols_to_convert:
+    data_2025[col] = pd.to_numeric(data_2025[col], errors="coerce")
 
-# Check for production trends
+# Fill missing values with zero (or use another imputation strategy)
+data_2025.fillna(0, inplace=True)
+
+# Generate a rolling average (7-day moving average) for Factory Weight
+data_2025["Factory W MA7"] = data_2025["Factory W"].rolling(window=7, min_periods=1).mean()
+
+# Plot production trends
 plt.figure(figsize=(12, 6))
-sns.lineplot(x="Date", y="Factory W", data=data_2025, marker="o", label="Factory Weight")
-sns.lineplot(x="Date", y="Field Wght", data=data_2025, marker="s", label="Field Weight")
+sns.lineplot(data=data_2025, x="Date", y="Factory W", label="Factory Weight", marker="o")
+sns.lineplot(data=data_2025, x="Date", y="Factory W MA7", label="7-day Moving Average", linestyle="--")
+
 plt.xlabel("Date")
-plt.ylabel("Weight (kg)")
-plt.title("Production Trends (Factory vs. Field Weight) - 2025")
+plt.ylabel("Factory Weight")
+plt.title("Production Trend Analysis - 2025")
+plt.xticks(rotation=45)
 plt.legend()
-plt.xticks(rotation=45)
-plt.grid(True)
+plt.grid()
 plt.show()
 
-# Variance trend
-plt.figure(figsize=(12, 6))
-sns.lineplot(x="Date", y="Variance", data=data_2025, marker="o", color="red")
-plt.xlabel("Date")
-plt.ylabel("Variance")
-plt.title("Variance Over Time - 2025")
-plt.xticks(rotation=45)
-plt.grid(True)
-plt.show()
+# Identify significant drops in production (>10% drop from previous day)
+data_2025["Daily Change %"] = data_2025["Factory W"].pct_change() * 100
+significant_drops = data_2025[data_2025["Daily Change %"] < -10]
 
-# Average weight vs. Rainfall
-plt.figure(figsize=(10, 5))
-sns.scatterplot(x="Rainfall", y="Average", data=data_2025, color="green")
-plt.xlabel("Rainfall (mm)")
-plt.ylabel("Average Weight")
-plt.title("Impact of Rainfall on Average Weight - 2025")
-plt.grid(True)
-plt.show()
+if not significant_drops.empty:
+    print("\nSignificant production drops (>10%) detected on these dates:")
+    print(significant_drops[["Date", "Factory W", "Daily Change %"]])
+else:
+    print("\nNo significant production drops detected.")
 
-# Detecting drops in production
-data_2025["Factory_W_Change"] = data_2025["Factory W"].diff()
-data_2025["Field_W_Change"] = data_2025["Field Wght"].diff()
-
-plt.figure(figsize=(12, 6))
-sns.lineplot(x="Date", y="Factory_W_Change", data=data_2025, marker="o", label="Factory Weight Change")
-sns.lineplot(x="Date", y="Field_W_Change", data=data_2025, marker="s", label="Field Weight Change")
-plt.xlabel("Date")
-plt.ylabel("Change in Weight")
-plt.title("Daily Changes in Production Weight - 2025")
-plt.legend()
-plt.xticks(rotation=45)
-plt.grid(True)
-plt.show()
-
-# Display processed data
-print(data_2025.head())
-
-# Save cleaned data
-data_2025.to_csv("cleaned_data_2025.csv", index=False)
+# Save cleaned data for further analysis
+data_2025.to_csv("cleaned_production_2025.csv", index=False)
+print("\nCleaned data saved as 'cleaned_production_2025.csv'.")
