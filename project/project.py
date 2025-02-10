@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.seasonal import seasonal_decompose
+import glob
 
 # Load all CSV files
 file_paths = glob.glob("C:/Users/user/Documents/data--science/project/*.csv")
