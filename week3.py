@@ -148,3 +148,11 @@ upper_bound = Q3 + 1.5 * IQR
 #  - removing the outliers
 df_filtered = df[(df['Salary'] > lower_bound) & (df['Salary'] < upper_bound)]
 print(df_filtered)
+
+
+
+
+# Lesson 3: Encoding categorical data
+
+#  what is encoding?
+
